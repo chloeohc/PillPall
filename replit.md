@@ -29,9 +29,9 @@ Emergency contact preference: Should be user's primary carrier (insurance) or ph
 
 ### Data Storage
 - **ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL with Neon serverless driver
+- **Database**: PostgreSQL with Neon serverless driver (Active)
 - **Schema**: Structured tables for medications, doses, symptoms, and user settings
-- **Development Storage**: In-memory storage implementation for development/testing
+- **Storage Implementation**: DatabaseStorage class with full CRUD operations
 - **Migrations**: Drizzle Kit for database schema management
 
 ## Key Components
