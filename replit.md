@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a full-stack medication tracking application built with React, Express, and TypeScript. The application helps users manage their medications, track doses, monitor symptoms, and configure emergency contacts. It features a mobile-first design with a bottom navigation interface and includes functionality for camera-based pill identification, notification scheduling, and symptom tracking.
+This is a full-stack medication tracking application built with React, Express, and TypeScript. The application helps users manage their medications, track doses, monitor symptoms, and configure emergency contacts. It features a mobile-first design with a bottom navigation interface and includes functionality for camera-based pill identification, notification scheduling, symptom tracking, and a comprehensive medication database with over 20 common medications.
 
 ## User Preferences
 
@@ -43,7 +43,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend Components
 - **Dashboard**: Main view showing today's medications and recent symptoms
-- **Medication Management**: CRUD operations for medications with camera integration
+- **Medication Management**: CRUD operations for medications with camera integration and database search
+- **Medication Search**: Comprehensive search through 20+ common medications with auto-complete
 - **Symptom Tracking**: Log symptoms with severity ratings and view historical data
 - **Settings**: Configure user preferences and emergency contacts
 - **Camera Modal**: Integration for pill identification (placeholder implementation)
@@ -51,6 +52,7 @@ Preferred communication style: Simple, everyday language.
 ### Backend Services
 - **Storage Interface**: Abstract storage layer supporting both in-memory and database implementations
 - **API Routes**: RESTful endpoints for all CRUD operations
+- **Medication Database**: Comprehensive database of 20+ common medications with search functionality
 - **Request Logging**: Middleware for API request monitoring
 
 ## Data Flow

@@ -7,6 +7,7 @@ import {
   insertSymptomSchema,
   insertUserSettingsSchema
 } from "@shared/schema";
+import { searchMedications, getMedicationByName, getMedicationsByCategory } from "./medication-database";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Medications
@@ -187,6 +188,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Schedule generated", dosesCreated: newDoses.length });
     } catch (error) {
       res.status(500).json({ message: "Failed to generate schedule" });
+    }
+  });
+
+  // Medication Database Search
+  app.get("/api/medication-database/search", async (req, res) => {
+    try {
+      const query = req.query.q as string || "";
+      const results = searchMedications(query);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to search medications" });
+    }
+  });
+
+  app.get("/api/medication-database/:name", async (req, res) => {
+    try {
+      const medication = getMedicationByName(req.params.name);
+      if (!medication) {
+        res.status(404).json({ message: "Medication not found" });
+        return;
+      }
+      res.json(medication);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch medication" });
+    }
+  });
+
+  app.get("/api/medication-database/category/:category", async (req, res) => {
+    try {
+      const medications = getMedicationsByCategory(req.params.category);
+      res.json(medications);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch medications by category" });
     }
   });
 
