@@ -89,13 +89,13 @@ export default function Settings() {
 
   const testEmergencyContact = () => {
     if (formData.emergencyContactPhone) {
-      if (confirm(`Call ${formData.emergencyContactName || 'Emergency Contact'} at ${formData.emergencyContactPhone}?`)) {
+      if (confirm(`Call ${formData.emergencyContactName || 'Primary Contact'} at ${formData.emergencyContactPhone}?`)) {
         window.location.href = `tel:${formData.emergencyContactPhone}`;
       }
     } else {
       toast({
-        title: "No Emergency Contact",
-        description: "Please add an emergency contact first",
+        title: "No Primary Contact",
+        description: "Please add your pharmacy/carrier contact first",
         variant: "destructive",
       });
     }
@@ -132,22 +132,27 @@ export default function Settings() {
 
       <main className="px-4 py-6 space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Emergency Contacts */}
+          {/* Primary Carrier/Pharmacist Contact */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Phone className="w-5 h-5 text-red-600" />
-                <span>Emergency Contact</span>
+                <span>Primary Carrier/Pharmacist</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-blue-800">
+                  Add your primary pharmacy or insurance carrier contact for medication emergencies and questions.
+                </p>
+              </div>
               <div>
-                <Label htmlFor="emergencyName">Contact Name</Label>
+                <Label htmlFor="emergencyName">Pharmacist/Carrier Name</Label>
                 <Input
                   id="emergencyName"
                   value={formData.emergencyContactName}
                   onChange={(e) => setFormData(prev => ({ ...prev, emergencyContactName: e.target.value }))}
-                  placeholder="Enter emergency contact name"
+                  placeholder="e.g., CVS Pharmacy or Blue Cross"
                 />
               </div>
               <div>
@@ -157,7 +162,7 @@ export default function Settings() {
                   type="tel"
                   value={formData.emergencyContactPhone}
                   onChange={(e) => setFormData(prev => ({ ...prev, emergencyContactPhone: e.target.value }))}
-                  placeholder="Enter phone number"
+                  placeholder="Enter pharmacy/carrier phone"
                 />
               </div>
               <Button
@@ -167,7 +172,7 @@ export default function Settings() {
                 className="w-full"
               >
                 <Phone className="w-4 h-4 mr-2" />
-                Test Emergency Contact
+                Call Primary Contact
               </Button>
             </CardContent>
           </Card>
@@ -177,27 +182,32 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <User className="w-5 h-5 text-blue-600" />
-                <span>Doctor Information</span>
+                <span>Healthcare Provider</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-green-800">
+                  Optional: Add your primary doctor or healthcare provider for reference.
+                </p>
+              </div>
               <div>
-                <Label htmlFor="doctorName">Doctor Name</Label>
+                <Label htmlFor="doctorName">Provider Name</Label>
                 <Input
                   id="doctorName"
                   value={formData.doctorName}
                   onChange={(e) => setFormData(prev => ({ ...prev, doctorName: e.target.value }))}
-                  placeholder="Enter doctor's name"
+                  placeholder="e.g., Dr. Smith or Main Street Clinic"
                 />
               </div>
               <div>
-                <Label htmlFor="doctorPhone">Doctor Phone</Label>
+                <Label htmlFor="doctorPhone">Provider Phone</Label>
                 <Input
                   id="doctorPhone"
                   type="tel"
                   value={formData.doctorPhone}
                   onChange={(e) => setFormData(prev => ({ ...prev, doctorPhone: e.target.value }))}
-                  placeholder="Enter doctor's phone number"
+                  placeholder="Healthcare provider phone number"
                 />
               </div>
             </CardContent>

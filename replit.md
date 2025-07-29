@@ -7,6 +7,7 @@ This is a full-stack medication tracking application built with React, Express, 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Emergency contact preference: Should be user's primary carrier (insurance) or pharmacist, not generic doctor.
 
 ## System Architecture
 
@@ -39,7 +40,7 @@ Preferred communication style: Simple, everyday language.
 1. **Medications**: Store medication information including name, dosage, frequency, timing, and food requirements
 2. **Medication Doses**: Track individual dose instances with scheduling and completion status
 3. **Symptoms**: Log symptom descriptions with severity ratings and timestamps
-4. **User Settings**: Store emergency contacts, doctor information, and notification preferences
+4. **User Settings**: Store primary carrier/pharmacist contact, healthcare provider information, and notification preferences
 
 ### Frontend Components
 - **Dashboard**: Main view showing today's medications and recent symptoms
