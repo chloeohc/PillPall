@@ -60,7 +60,7 @@ export default function Dashboard() {
     mutationFn: async (doseId: string) => {
       const response = await apiRequest("PUT", `/api/doses/${doseId}`, {
         status: "taken",
-        takenTime: new Date(),
+        takenTime: new Date().toISOString(),
       });
       return response.json();
     },
@@ -69,6 +69,13 @@ export default function Dashboard() {
       toast({
         title: "Success",
         description: "Medication marked as taken",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: `Failed to mark medication as taken: ${error.message || 'Unknown error'}`,
+        variant: "destructive",
       });
     },
   });

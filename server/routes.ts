@@ -92,14 +92,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/doses/:id", async (req, res) => {
     try {
+      console.log('Updating dose:', req.params.id, 'with data:', req.body);
       const dose = await storage.updateMedicationDose(req.params.id, req.body);
       if (!dose) {
         res.status(404).json({ message: "Dose not found" });
         return;
       }
       res.json(dose);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to update dose" });
+    } catch (error: any) {
+      console.error('Error updating dose:', error);
+      res.status(500).json({ message: "Failed to update dose", error: error?.message || 'Unknown error' });
     }
   });
 
