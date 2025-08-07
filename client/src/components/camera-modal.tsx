@@ -13,6 +13,8 @@ interface CameraModalProps {
 export default function CameraModal({ open, onOpenChange, onPillScanned }: CameraModalProps) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
@@ -30,23 +32,66 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
   }, [open]);
 
   const startCamera = async () => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' } // Use back camera on mobile
-      });
+      // Check if camera API is available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Camera not supported on this device");
+      }
+
+      // Try different camera configurations
+      let mediaStream;
+      
+      try {
+        // First try back camera for mobile
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { 
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+      } catch (backCameraError) {
+        // Fall back to any available camera
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+      }
+      
       setStream(mediaStream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        videoRef.current.play();
+        await videoRef.current.play();
       }
-    } catch (error) {
-      console.error('Error accessing camera:', error);
+      
+    } catch (error: any) {
+      console.error('Camera error:', error);
+      let errorMessage = "Could not access camera.";
+      
+      if (error.name === 'NotAllowedError') {
+        errorMessage = "Camera permission denied. Please allow camera access and refresh.";
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = "No camera found on this device.";
+      } else if (error.name === 'NotSupportedError') {
+        errorMessage = "Camera not supported in this browser.";
+      } else if (error.name === 'NotReadableError') {
+        errorMessage = "Camera is already in use by another application.";
+      }
+      
+      setError(errorMessage);
       toast({
         title: "Camera Error",
-        description: "Could not access camera. Please check permissions.",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -129,7 +174,19 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
 
           {/* Camera Feed */}
           <div className="h-full flex items-center justify-center">
-            {stream ? (
+            {error ? (
+              <div className="text-center text-white max-w-md px-4">
+                <Camera className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <p className="text-lg mb-2 text-red-400">Camera Error</p>
+                <p className="text-sm opacity-75 mb-4">{error}</p>
+                <Button
+                  onClick={startCamera}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  Try Again
+                </Button>
+              </div>
+            ) : stream ? (
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
@@ -140,8 +197,12 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
             ) : (
               <div className="text-center text-white">
                 <Camera className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p className="text-lg mb-2">Camera Loading...</p>
-                <p className="text-sm opacity-75">Please allow camera access</p>
+                <p className="text-lg mb-2">
+                  {isLoading ? "Starting Camera..." : "Camera Loading..."}
+                </p>
+                <p className="text-sm opacity-75">
+                  {isLoading ? "Please wait..." : "Please allow camera access"}
+                </p>
               </div>
             )}
           </div>
@@ -156,20 +217,22 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
             </div>
           </div>
 
-          {/* Capture Button */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-            <Button
-              onClick={captureImage}
-              disabled={!stream || isCapturing}
-              className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100"
-            >
-              {isCapturing ? (
-                <RotateCcw className="w-8 h-8 text-primary animate-spin" />
-              ) : (
-                <div className="w-12 h-12 bg-primary rounded-full"></div>
-              )}
-            </Button>
-          </div>
+          {/* Capture Button - only show when camera is working */}
+          {stream && !error && (
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+              <Button
+                onClick={captureImage}
+                disabled={isCapturing}
+                className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100"
+              >
+                {isCapturing ? (
+                  <RotateCcw className="w-8 h-8 text-primary animate-spin" />
+                ) : (
+                  <div className="w-12 h-12 bg-primary rounded-full"></div>
+                )}
+              </Button>
+            </div>
+          )}
 
           {/* Hidden canvas for image capture */}
           <canvas ref={canvasRef} className="hidden" />
