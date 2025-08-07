@@ -15,6 +15,7 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
@@ -63,11 +64,35 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
         });
       }
       
+      console.log('Camera stream obtained:', mediaStream);
+      console.log('Video tracks:', mediaStream.getVideoTracks());
       setStream(mediaStream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
-        await videoRef.current.play();
+        
+        // Set up video event handlers
+        videoRef.current.onloadedmetadata = () => {
+          console.log('Video metadata loaded');
+          setVideoReady(true);
+          videoRef.current?.play().catch(e => {
+            console.error('Play failed:', e);
+            setError('Failed to start video playback');
+          });
+        };
+        
+        videoRef.current.oncanplay = () => {
+          console.log('Video can play');
+          setVideoReady(true);
+        };
+        
+        videoRef.current.onerror = (e) => {
+          console.error('Video element error:', e);
+          setError('Failed to display camera feed');
+        };
+        
+        // Force load the video
+        videoRef.current.load();
       }
       
     } catch (error: any) {
@@ -100,6 +125,9 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
+    setVideoReady(false);
+    setError(null);
+    setIsLoading(false);
   };
 
   const captureImage = async () => {
@@ -168,8 +196,22 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
               <X className="w-5 h-5" />
             </Button>
             <div className="bg-black/50 rounded-lg px-3 py-2">
-              <span className="text-white text-sm">Position pill in center</span>
+              <span className="text-white text-sm">
+                {stream && videoReady ? "Position pill in center" : 
+                 stream && !videoReady ? "Loading camera..." : 
+                 "Starting camera..."}
+              </span>
             </div>
+            {stream && !videoReady && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={startCamera}
+                className="bg-black/50 text-white hover:bg-black/70"
+              >
+                Retry
+              </Button>
+            )}
           </div>
 
           {/* Camera Feed */}
@@ -187,13 +229,25 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
                 </Button>
               </div>
             ) : stream ? (
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                playsInline
-                muted
-              />
+              <div className="relative w-full h-full">
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  playsInline
+                  muted
+                  controls={false}
+                  style={{ backgroundColor: 'black' }}
+                />
+                {!videoReady && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                    <div className="text-center text-white">
+                      <Camera className="w-8 h-8 mx-auto mb-2 opacity-50 animate-pulse" />
+                      <p className="text-sm">Loading video...</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="text-center text-white">
                 <Camera className="w-16 h-16 mx-auto mb-4 opacity-50" />
@@ -217,8 +271,8 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
             </div>
           </div>
 
-          {/* Capture Button - only show when camera is working */}
-          {stream && !error && (
+          {/* Capture Button - only show when camera is working and video is ready */}
+          {stream && !error && videoReady && (
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
               <Button
                 onClick={captureImage}
