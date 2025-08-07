@@ -93,7 +93,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/doses/:id", async (req, res) => {
     try {
       console.log('Updating dose:', req.params.id, 'with data:', req.body);
-      const dose = await storage.updateMedicationDose(req.params.id, req.body);
+      
+      // Convert ISO string timestamps to Date objects for Drizzle
+      const updateData = { ...req.body };
+      if (updateData.takenTime && typeof updateData.takenTime === 'string') {
+        updateData.takenTime = new Date(updateData.takenTime);
+      }
+      if (updateData.scheduledTime && typeof updateData.scheduledTime === 'string') {
+        updateData.scheduledTime = new Date(updateData.scheduledTime);
+      }
+      
+      const dose = await storage.updateMedicationDose(req.params.id, updateData);
       if (!dose) {
         res.status(404).json({ message: "Dose not found" });
         return;
