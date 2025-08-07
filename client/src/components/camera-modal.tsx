@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X, Camera, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -110,6 +110,7 @@ export default function CameraModal({ open, onOpenChange, onPillScanned }: Camer
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 max-w-full max-h-full h-screen bg-black">
+        <DialogTitle className="sr-only">Camera Pill Scanner</DialogTitle>
         <div className="relative h-full">
           {/* Header */}
           <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between">
