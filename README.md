@@ -22,7 +22,6 @@ A sleek and easy-to-use medication tracking app that helps you manage daily dose
 | Database   | SQLite / Postgres / Drizzle *(as configured)* |
 | Hosting    | Vercel / Repl.it / Netlify |
 
-*(Adjust backend and database lines to reflect your actual setup.)*
 
 ---
 
