@@ -4,7 +4,7 @@ A sleek and easy-to-use medication tracking app that helps you manage daily dose
 
 ---
 
-## ✨ Features
+## Features
 - **Daily Medication Reminders** — Set alarms and receive prompts to take medications on time.  
 - **Dose Logging & History** — Record each dose you take and revisit your past compliance.  
 - **Symptom Tracker** — Log how you’re feeling each day and see trends over time.  
@@ -13,7 +13,7 @@ A sleek and easy-to-use medication tracking app that helps you manage daily dose
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 | Component  | Technology               |
 |------------|--------------------------|
 | Frontend   | React & TypeScript       |
@@ -25,7 +25,7 @@ A sleek and easy-to-use medication tracking app that helps you manage daily dose
 
 ---
 
-## 🚀 Installation
+## Installation
 To run **PillPall** locally:
 
 # 1. Clone the repo
