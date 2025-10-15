@@ -50,7 +50,7 @@ npm run dev
 http://localhost:3000
 ```
 
-## 📖 Usage
+## Usage
 1. **Add Medications** — Enter medication name, dosage, and schedule.  
 2. **Enable Reminders** — Get notifications when it’s time to take your meds.  
 3. **Log Doses** — Mark each dose as taken to keep your records up-to-date.  
@@ -59,7 +59,7 @@ http://localhost:3000
 
 ---
 
-## 📅 Roadmap
+## Roadmap
 - [ ] **Push Notifications** for mobile devices  
 - [ ] **Weekly Adherence Summary** to visualize performance  
 - [ ] **Dark Mode** and enhanced accessibility features  
